@@ -1,18 +1,24 @@
 #include "raylib.h"
+#include "background.h"
+#include "main.h"
+#include <stdio.h>
+
+struct snake
+{
+    /* data */
+};
+
 
 int main(void)
 {
-    const int screenWidth = 700;
-    const int screenHeight = 500;
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
+    int screenHeight = 928;
+    int screenWidth = 640; 
+    InitWindow(screenWidth, screenHeight, "Snake Game");
     SetTargetFPS(60);
-    while (!WindowShouldClose())
+    while (!WindowShouldClose()) // esc or x
     {
         BeginDrawing();
-            ClearBackground(RAYWHITE);
-            if (IsWindowResized() == true) {
-                SetWindowSize(screenWidth, screenHeight); 
-            } 
+            background(); 
         EndDrawing();
     }
     CloseWindow();
