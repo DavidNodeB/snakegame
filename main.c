@@ -8,8 +8,8 @@ enum direction {
 
 // variables
 
-const int windowHeight = 960; 
-const int windowWidth = 640;
+const int windowHeight = 960 % 32; 
+const int windowWidth = 640 % 32;
 int speed = 4;
 bool isGameOver = false; 
 
