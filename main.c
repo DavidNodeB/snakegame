@@ -8,8 +8,8 @@ enum direction {
 
 // variables
 
-const int windowHeight = 960 % 32; 
-const int windowWidth = 640 % 32;
+const int windowHeight = 960; 
+const int windowWidth = 640;
 int speed = 4;
 bool isGameOver = false; 
 
@@ -48,26 +48,10 @@ void initPlayer(void) {
 }
 
 void playerLogic() {
-
     if (IsKeyDown(KEY_W)) snake.direction = UP;
     if (IsKeyDown(KEY_A)) snake.direction = LEFT;
     if (IsKeyDown(KEY_S)) snake.direction = DOWN;
     if (IsKeyDown(KEY_D)) snake.direction = RIGHT;
-
-    switch (snake.direction) {
-        case UP:
-            snake.position.y -= speed;
-            break;
-        case LEFT:
-            snake.position.x -= speed;
-            break;
-        case DOWN:
-            snake.position.y += speed;
-            break;
-        case RIGHT:
-            snake.position.x += speed;
-            break;
-    }
 }
 
 
