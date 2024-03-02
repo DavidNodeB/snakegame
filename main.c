@@ -1,79 +1,94 @@
 #include "raylib.h"
-#include "background.h"
-#include "main.h"
 #include <stdio.h>
 #include <stdbool.h>
 
+enum direction {
+    UP, DOWN, LEFT, RIGHT
+}; 
+
+// variables
+
+const int windowHeight = 960; 
+const int windowWidth = 640;
+int speed = 4;
+bool isGameOver = false; 
+
+struct {
+    Vector2 position; // x and y
+    Vector2 size; // 32 by 32 cannot exceed
+    Texture2D pattern;
+    enum direction direction;
+} snake;
+
+void initMap(void) {
+    int width = GetScreenWidth();
+    int height = GetScreenHeight();
+    Color lightgreen = (Color){170, 215, 81, 255};
+    Color darkgreen = (Color){162, 209, 73, 255};
+
+    for (int x = 0; x < height + (height - height % 32); x+=32) {
+        for (int y = 0; y < width + (width - width % 32); y+=32) {
+            if (( x / 32 + y / 32) % 2 == 0) {
+                DrawRectangle(x, y, 32, 32, lightgreen); 
+            } else {
+                DrawRectangle(x, y, 32, 32, darkgreen);
+            }
+        }
+    }
+}
+
+void initPlayer(void) {
+    int width = GetScreenWidth(); 
+    int height = GetScreenHeight();
+    Image snakeImage = LoadImage("resources/textures/head.png");
+    snake.position = (Vector2){width / 2, height / 2};
+    snake.size = (Vector2){32, 32}; // size of the tiles
+    snake.pattern = LoadTextureFromImage(snakeImage);
+    UnloadImage(snakeImage); 
+}
+
+void playerLogic() {
+
+    if (IsKeyDown(KEY_W)) snake.direction = UP;
+    if (IsKeyDown(KEY_A)) snake.direction = LEFT;
+    if (IsKeyDown(KEY_S)) snake.direction = DOWN;
+    if (IsKeyDown(KEY_D)) snake.direction = RIGHT;
+
+    switch (snake.direction) {
+        case UP:
+            snake.position.y -= speed;
+            break;
+        case LEFT:
+            snake.position.x -= speed;
+            break;
+        case DOWN:
+            snake.position.y += speed;
+            break;
+        case RIGHT:
+            snake.position.x += speed;
+            break;
+    }
+}
+
+
+
 int main(void)
 {
-    int screenHeight = 928;
-    int screenWidth = 640;
-    int gameOver = false;
-    int active = true; 
-    int score = 0;
-    int highestScore = 0; 
-    int apples = 0; 
-    int x = 0;
-    int y = 0;
-    int trackCase = 0; 
-    InitWindow(screenWidth, screenHeight, "Snake Game");
-    printf(TextFormat("Screen size: %d\n", GetScreenWidth())); 
+    InitWindow(windowWidth, windowHeight, "Snake Game");
     SetTargetFPS(60);
+    initPlayer(); 
     while (!WindowShouldClose()) // esc or x
     {
-        // Update
-        Rectangle snake = {x, y, 32, 32}; 
-        int getSw = GetScreenWidth();
-        int getSh= GetScreenHeight();
+        // update 
+        playerLogic(); 
 
-        if (IsKeyPressed(KEY_A)) trackCase = 2;
-        if (IsKeyPressed(KEY_S)) trackCase = 3;
-        if (IsKeyPressed(KEY_D)) trackCase = 4;
-        if (IsKeyPressed(KEY_W)) trackCase = 1;
-        if (gameOver != true) {
-            switch (trackCase) {
-                case 1:
-                    y-=5;
-                    break;
-                case 2:
-                    x-=5;
-                    break;
-                case 3:
-                    y+=5;
-                    break;
-                case 4:
-                    x+=5;
-                    break; 
-            } // continually moves because it is just checks if the key is pressed once
-        }
-
-        if (snake.x < 0 || snake.x > getSw || snake.y < 0 || snake.y > getSh) {
-            x = 0;
-            y = 0;
-            gameOver = true;
-        }
-
-        const char *defaultText = "Please press enter or space to start the game";
-        const char *scoreText = "Score: ";
-        Vector2 scoreSize = MeasureTextEx(GetFontDefault(), scoreText, 20, 20 / 10);
-        Vector2 scorePos = (Vector2){getSw / 2 - scoreSize.x / 2, getSh / 2 - scoreSize.y / 2}; 
-        Vector2 size = MeasureTextEx(GetFontDefault(), defaultText, 20, 20 / 10);
-        Vector2 textPos = (Vector2){getSw / 2 - size.x / 2, getSh / 2 - size.y / 2}; 
-        
-        if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE)) {
-            gameOver = false;
-        }
-        //Draw
         BeginDrawing();
-                background(); 
-                DrawRectangleRec(snake,RED);
-                if (gameOver == true) {
-                    DrawText(defaultText, (int)textPos.x, (int)textPos.y, 20, BLUE);
-                    DrawText(TextFormat("Score: %d", score), (int)scorePos.x, (int)scorePos.y + 30, 20, BLUE);
-                }
+            ClearBackground(RAYWHITE);
+            initMap();
+            DrawTexture(snake.pattern, snake.position.x, snake.position.y, WHITE); 
         EndDrawing();
-
     }
+    UnloadTexture(snake.pattern); 
     CloseWindow();
     return 0;
 }
