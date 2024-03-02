@@ -52,6 +52,21 @@ void playerLogic() {
     if (IsKeyDown(KEY_A)) snake.direction = LEFT;
     if (IsKeyDown(KEY_S)) snake.direction = DOWN;
     if (IsKeyDown(KEY_D)) snake.direction = RIGHT;
+
+    switch (snake.direction) {
+        case UP:
+            snake.position.y -= speed;
+            break;
+        case LEFT:
+            snake.position.x -= speed;
+            break;
+        case DOWN:
+            snake.position.y += speed;
+            break;
+        case RIGHT:
+            snake.position.x += speed;
+            break;
+    }
 }
 
 
